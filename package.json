@@ -1,0 +1,18 @@
+{
+  "name": "nodejs_projects",
+  "version": "1.0.0",
+  "description": "A bunch of nodeJS, expressJS and mongoDB projects",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon ./02-Store-Api/app.js"
+  },
+  "keywords": [],
+  "author": "Abdullahi Fahm",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
+    "mongoose": "^6.8.3"
+  }
+}
