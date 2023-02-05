@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
+const jwt = require("jsonwebtoken");
 
 const register = async (req, res) => {
   console.log(req.body);
@@ -24,6 +25,8 @@ const login = async (req, res) => {
   }
   // compare password
   const token = user.createJWT();
+  const decode = jwt.verify(token, process.env.JWT_TOKEN);
+  req.user = decode;
   res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
 };
 

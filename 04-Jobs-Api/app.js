@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const connectDB = require("./db/connect");
+const authenticateUser = require("./middleware/authentication");
 
 // error handler
 const notFoundMiddleware = require("./middleware/not-found");
@@ -14,13 +15,14 @@ app.use(express.json());
 
 // routes
 const authRouter = require("./routes/auth");
+const jobRouter = require("./routes/jobs");
 
 app.get("/", (req, res) => {
   res.send("jobs api");
 });
 
 app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/jobs");
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
