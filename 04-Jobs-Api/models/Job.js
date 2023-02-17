@@ -8,6 +8,11 @@ const JobSchema = Schema(
       minlength: [3, "Mininmum Character is 3"],
       maxlength: [50, "Maximum Character is 50"],
     },
+    position: {
+      type: String,
+      required: [true, "Please provide position"],
+      maxlength: 100,
+    },
     status: {
       type: String,
       enum: ["interview", "declined", "pending"],
