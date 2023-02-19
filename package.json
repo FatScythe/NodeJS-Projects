@@ -4,7 +4,8 @@
   "description": "A bunch of nodeJS, expressJS and mongoDB projects",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon ./04-Jobs-Api/app.js"
+    "start": "node app.js",
+    "dev": "nodemon ./04.5-Jobster-Api/app.js"
   },
   "keywords": [],
   "author": "Abdullahi Fahm",
