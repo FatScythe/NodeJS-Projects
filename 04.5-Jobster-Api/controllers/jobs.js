@@ -1,4 +1,6 @@
 const Job = require("../models/Job");
+const mongoose = require("mongoose");
+const moment = require("moment");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, NotFoundError } = require("../errors");
 
@@ -39,9 +41,20 @@ const getAllJobs = async (req, res) => {
     result = result.sort("-position");
   }
 
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * limit;
+
+  result = result.skip(skip).limit(limit);
+
   const jobs = await result;
-  res.status(StatusCodes.OK).json({ jobs, count: jobs.length });
+
+  const totalJobs = await Job.countDocuments(queryObject);
+  const numOfPages = await Math.ceil(totalJobs / limit);
+
+  res.status(StatusCodes.OK).json({ jobs, totalJobs, numOfPages });
 };
+
 const getJob = async (req, res) => {
   const {
     user: { userId },
@@ -101,10 +114,65 @@ const deleteJob = async (req, res) => {
   res.status(StatusCodes.OK).send();
 };
 
+const showStats = async (req, res) => {
+  let stats = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    { $group: { _id: "$status", count: { $sum: 1 } } },
+  ]);
+
+  // NB: We did not use the id directly
+  // because the $match is looking for an object
+
+  stats = stats.reduce((acc, curr) => {
+    const { _id, count } = curr;
+    acc[_id] = count;
+    return acc;
+  }, {});
+
+  const defaultStats = {
+    interview: stats.interview || 0,
+    declined: stats.declined || 0,
+    pending: stats.pending || 0,
+  };
+  let monthlyApplications = await Job.aggregate([
+    { $match: { createdBy: mongoose.Types.ObjectId(req.user.userId) } },
+    {
+      $group: {
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
+        count: { $sum: 1 },
+      },
+    },
+    { $sort: { "_id.year": -1, "_id.month": -1 } },
+    { $limit: 6 },
+  ]);
+
+  // $sort grouped from latest to oldest
+  // and limit made the response 6
+
+  monthlyApplications = monthlyApplications
+    .map((item) => {
+      const {
+        _id: { year, month },
+        count,
+      } = item;
+
+      const date = moment()
+        .year(year)
+        .month(month - 1)
+        .format("MMM Y");
+
+      return { date, count };
+    })
+    .reverse();
+
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
+};
+
 module.exports = {
   createJob,
   deleteJob,
   getAllJobs,
   updateJob,
   getJob,
+  showStats,
 };
