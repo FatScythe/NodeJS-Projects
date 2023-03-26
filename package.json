@@ -2,10 +2,10 @@
   "name": "nodejs_projects",
   "version": "1.0.0",
   "description": "A bunch of nodeJS, expressJS and mongoDB projects",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon ./07-Stripe-Payment/app.js"
+    "dev": "nodemon ./08-Ecommerce/app.js"
   },
   "keywords": [],
   "author": "Abdullahi Fahm",
@@ -13,6 +13,7 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cloudinary": "^1.34.0",
+    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
@@ -25,10 +26,12 @@
     "jsonwebtoken": "^9.0.0",
     "moment": "^2.29.4",
     "mongoose": "^6.8.3",
+    "morgan": "^1.10.0",
     "nodemailer": "^6.9.1",
     "rate-limiter": "^0.2.0",
     "stripe": "^11.15.0",
     "swagger-ui-express": "^4.6.0",
+    "validator": "^13.9.0",
     "xss-clean": "^0.1.1",
     "yamljs": "^0.3.0"
   }
