@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
-const { createJWT, attachCookiesToResponse } = require("../utils");
+const { attachCookiesToResponse, createTokenUser } = require("../utils");
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -12,13 +12,8 @@ const register = async (req, res) => {
   const role = isFirstUser ? "admin" : "user";
 
   const user = await User.create({ name, email, password, role });
-  const tokenUser = {
-    name: user.name,
-    role: user.role,
-    userId: user._id,
-    email: user.email,
-  };
 
+  const tokenUser = createTokenUser(user);
   attachCookiesToResponse(res, tokenUser);
 
   res.status(StatusCodes.CREATED).json({ user: tokenUser });
@@ -34,15 +29,16 @@ const login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new UnauthenticatedError("Invalid Credentials!");
+    throw new UnauthenticatedError("Invalid Credentials!!!");
   }
 
-  const tokenUser = {
-    name: user.name,
-    role: user.role,
-    userId: user._id,
-    email: user.email,
-  };
+  const isPasswordCorrect = await user.comparePassword(password);
+
+  if (!isPasswordCorrect) {
+    throw new BadRequestError("Invalid Credentials!!!");
+  }
+
+  const tokenUser = createTokenUser(user);
 
   attachCookiesToResponse(res, tokenUser);
 
