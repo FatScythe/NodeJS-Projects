@@ -23,7 +23,7 @@ const login = async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    throw new BadRequestError("Please provide name and password");
+    throw new BadRequestError("Please provide email and password");
   }
 
   const user = await User.findOne({ email });
