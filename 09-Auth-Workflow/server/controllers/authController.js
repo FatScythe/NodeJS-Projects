@@ -42,7 +42,7 @@ const register = async (req, res) => {
   // const host = req.get("host");
   // console.log(`host: ${host}`);
   // const forwardedHost = req.get("x-forwarded-host");
-  // console.log(`forwadedHost: ${forwadedHost}`);
+  // console.log(`forwadedHost: ${forwardedHost}`);
   // const forwadedProtocol = req.get("x-forwarded-proto");
   // console.log(`forwadedProtocol: ${forwadedProtocol}`);
 
@@ -156,7 +156,7 @@ const forgotPassword = async (req, res) => {
       origin,
     });
 
-    const tenMins = 1000 * 60 * 60 * 10;
+    const tenMins = 1000 * 60 * 10;
 
     // hash password on db
     user.passwordToken = createHash(passwordToken);
